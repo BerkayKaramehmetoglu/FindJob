@@ -19,11 +19,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,15 +44,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.findjob.ui.theme.FindJobTheme
 import com.example.findjob.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun Greeting(
     modifier: Modifier = Modifier,
-    viewModel: UserViewModel
+    viewModel: UserViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
 
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -88,6 +96,7 @@ fun Greeting(
                 CustomElevatedBtn(onClick = {
                     viewModel.loginUser(email = email.value, password = password.value)
                 })
+
                 Text(
                     "Hesap Oluştur",
                     modifier = Modifier.clickable {
@@ -96,6 +105,18 @@ fun Greeting(
                     fontSize = 17.sp,
                     textDecoration = TextDecoration.Underline
                 )
+            }
+        }
+    }
+
+    LaunchedEffect(viewModel.loginMessage.value) {
+        viewModel.loginMessage.value?.let { message ->
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.loginMessage.value = null
             }
         }
     }

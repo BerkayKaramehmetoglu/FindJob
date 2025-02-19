@@ -12,7 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class UserViewModel : ViewModel() {
-
     private val BASE_URL = "http://10.0.2.2:3000/"
 
     private val retrofit = Retrofit.Builder()
@@ -35,11 +34,19 @@ class UserViewModel : ViewModel() {
         }
     }
 
+    val loginMessage = mutableStateOf<String?>(null)
+
     fun loginUser(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                user.postUser(PostUser(email, password))
-                println("başarılı")
+                val response = user.postUser(PostUser(email, password))
+                if (response.isSuccessful) {
+                    loginMessage.value = response.body()?.message
+                    println(response.body()?.message)
+                } else {
+                    loginMessage.value = response.body()?.message
+                    println(response.body()?.message)
+                }
             } catch (e: Exception) {
                 println("Bağlantı hatası: ${e.localizedMessage}")
             }
