@@ -70,4 +70,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
+
+    //navigation
+    implementation("androidx.navigation:navigation-compose:2.8.6")
+    implementation ("com.google.code.gson:gson:2.12.1")
 }

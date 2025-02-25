@@ -1,6 +1,6 @@
 package com.example.findjob.model
 
-data class PostUser(
+data class LoginUser(
     val email: String,
     val password: String
 )
