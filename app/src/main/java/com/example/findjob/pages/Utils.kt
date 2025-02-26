@@ -1,5 +1,6 @@
 package com.example.findjob.pages
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
 fun CustomText(
@@ -69,7 +71,7 @@ fun CustomTxtField(
 }
 
 @Composable
-fun CustomElevatedBtn(onClick: () -> Unit, text: String) {
+fun CustomElevatedBtn(text: String, onClick: () -> Unit) {
     ElevatedButton(
         onClick = { onClick() }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = Color(0xFFB34086)
@@ -81,7 +83,7 @@ fun CustomElevatedBtn(onClick: () -> Unit, text: String) {
             text,
             color = Color(0xFFFFE642),
             textAlign = TextAlign.Center,
-            fontSize = 25.sp
+            fontSize = 25.sp,
         )
     }
 }

@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.protolite.well.known.types)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,7 +72,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
 
-    //navigation
+    //Navigation
     implementation("androidx.navigation:navigation-compose:2.8.6")
     implementation ("com.google.code.gson:gson:2.12.1")
+
+    //DataStore
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
 }

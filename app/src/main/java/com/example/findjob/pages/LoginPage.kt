@@ -1,5 +1,6 @@
 package com.example.findjob.pages
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.findjob.viewmodel.LoginUserViewModel
-import com.example.findjob.viewmodel.RegisterUserViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,12 +78,12 @@ fun LoginPage(
                     isPassword = true,
                     keyboardType = KeyboardType.Password
                 )
-                CustomElevatedBtn(onClick = {
+                CustomElevatedBtn(text = "Giriş Yap", onClick = {
                     viewModel.loginUser(
                         email = email.value,
                         password = password.value
                     )
-                }, text = "Giriş Yap")
+                })
 
                 Text(
                     "Hesap Oluştur",
@@ -106,4 +108,16 @@ fun LoginPage(
             }
         }
     }
+
+    LaunchedEffect(viewModel.success.value) {
+        viewModel.success.value?.let {
+            coroutineScope.launch {
+                if (it) {
+                    navController.navigate("main_screen")
+                }
+                viewModel.success.value = null
+            }
+        }
+    }
+
 }
