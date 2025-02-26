@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             composable("main_screen") {
                                 MainPage(navController) { paddingValues ->
                                     Box(modifier = Modifier.padding(paddingValues)) {
-                                        Text(text = "Merhaba, dünya!")
+                                        Text(text = "Uygulamada Çıkış Yapıldığında Çökmesine Neden olan Hatayı Gider")
                                     }
                                 }
                             }

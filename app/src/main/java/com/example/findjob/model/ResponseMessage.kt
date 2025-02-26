@@ -1,3 +1,3 @@
 package com.example.findjob.model
 
-data class ResponseMessage(val result: Result, val message: String)
+data class ResponseMessage(val result: Results, val message: String)
