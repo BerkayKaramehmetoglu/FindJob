@@ -5,15 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.findjob.datastore.getUserSession
 import com.example.findjob.pages.LoginPage
 import com.example.findjob.pages.MainPage
+import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
 import com.example.findjob.ui.theme.FindJobTheme
 import com.example.findjob.viewmodel.LoginUserViewModel
@@ -35,7 +37,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             FindJobTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
@@ -48,12 +49,14 @@ class MainActivity : ComponentActivity() {
                         startDestination = if (uid != null) "main_screen" else "login_screen"
                     }
                 }
-
                 Scaffold(
-                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentWindowInsets = WindowInsets(0.dp),
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
+                    Column(modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()) {
                         NavHost(
                             navController = navController,
                             startDestination = startDestination
@@ -75,11 +78,11 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable("main_screen") {
-                                MainPage(navController) { paddingValues ->
-                                    Box(modifier = Modifier.padding(paddingValues)) {
-                                        Text(text = "Uygulamada Çıkış Yapıldığında Çökmesine Neden olan Hatayı Gider")
-                                    }
-                                }
+                                MainPage(navController = navController)
+                            }
+
+                            composable("postjob_screen") {
+                                PostJob(navController = navController)
                             }
                         }
                     }
@@ -88,3 +91,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+/*eksikler uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor
+kayan menude yazıya tıklanınca sayfa değiştiriyor onun yerine butona basınca değiştirmeli
+ */

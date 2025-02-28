@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,9 +46,10 @@ fun CustomText(
 
 @Composable
 fun CustomTxtField(
+    modifier: Modifier,
     value: MutableState<String>,
     label: String,
-    imageVector: ImageVector,
+    iconResId: Int,
     placeholder: String,
     isPassword: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text
@@ -59,11 +61,16 @@ fun CustomTxtField(
     }
     OutlinedTextField(
         value = value.value,
-        leadingIcon = { Icon(imageVector = imageVector, contentDescription = null) },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = iconResId),
+                contentDescription = null
+            )
+        },
         onValueChange = { value.value = it },
         label = { Text(text = label, fontSize = 20.sp) },
         placeholder = { Text(text = placeholder) },
-        modifier = Modifier.padding(10.dp),
+        modifier = modifier,
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
     )

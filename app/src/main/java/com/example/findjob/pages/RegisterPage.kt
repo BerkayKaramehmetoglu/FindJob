@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.findjob.R
 import com.example.findjob.viewmodel.RegisterUserViewModel
 import kotlinx.coroutines.launch
 
@@ -65,25 +67,28 @@ fun RegisterPage(
                 CustomTxtField(
                     value = email,
                     label = "Email Giriniz",
-                    imageVector = Icons.Default.Email,
+                    iconResId = R.drawable.baseline_email_24,
                     placeholder = "Email Giriniz",
-                    keyboardType = KeyboardType.Email
+                    keyboardType = KeyboardType.Email,
+                    modifier = Modifier.padding(10.dp)
                 )
                 CustomTxtField(
                     value = password,
                     label = "Şifre Giriniz",
-                    imageVector = Icons.Default.Lock,
+                    iconResId = R.drawable.baseline_lock_24,
                     placeholder = "Şifre Giriniz",
                     isPassword = true,
-                    keyboardType = KeyboardType.Password
+                    keyboardType = KeyboardType.Password,
+                    modifier = Modifier.padding(10.dp)
                 )
                 CustomTxtField(
                     value = rpassword,
                     label = "Tekrar Şifre Giriniz",
-                    imageVector = Icons.Default.Refresh,
+                    iconResId = R.drawable.baseline_lock_24,
                     placeholder = "Tekrar Şifre Giriniz",
                     isPassword = true,
-                    keyboardType = KeyboardType.Password
+                    keyboardType = KeyboardType.Password,
+                    modifier = Modifier.padding(10.dp)
                 )
                 CustomElevatedBtn(onClick = {
                     viewModel.registerUser(

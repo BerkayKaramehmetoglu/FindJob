@@ -1,5 +1,6 @@
 package com.example.findjob.pages
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,8 +49,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
-    navController: NavController,
-    content: @Composable (PaddingValues) -> Unit
+    navController: NavController
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -80,10 +80,11 @@ fun MainPage(
                         colors = NavigationDrawerItemDefaults.colors(
                             unselectedContainerColor = Color.Transparent
                         ),
-                        modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 0.dp),
+                        modifier = Modifier
+                            .padding(10.dp, 0.dp, 10.dp, 0.dp),
                         label = {
                             Text(
-                                "İş İlanı Ver",
+                                text = "İş İlanı Ver",
                                 color = Color(0xFF0E5459),
                                 fontSize = 17.sp
                             )
@@ -97,7 +98,7 @@ fun MainPage(
                                 modifier = Modifier.size(30.dp)
                             )
                         },
-                        onClick = { /* Handle click */ }
+                        onClick = { navController.navigate("postjob_screen") }
                     )
                     NavigationDrawerItem(
                         colors = NavigationDrawerItemDefaults.colors(
@@ -173,7 +174,9 @@ fun MainPage(
                 )
             }
         ) { innerPadding ->
-            content(innerPadding)
+            Column(modifier = Modifier.padding(innerPadding)) {
+                Text("Buraya diğer iş ilanları gelecek")
+            }
         }
     }
 }
