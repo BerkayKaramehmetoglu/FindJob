@@ -55,6 +55,7 @@ fun MainPage(
     val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
     ModalNavigationDrawer(
         scrimColor = Color.Gray,
         drawerContent = {

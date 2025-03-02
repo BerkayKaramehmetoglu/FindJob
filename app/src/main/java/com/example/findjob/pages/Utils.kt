@@ -1,6 +1,8 @@
 package com.example.findjob.pages
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -23,20 +24,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 
 @Composable
 fun CustomText(
     text: String,
+    modifier: Modifier,
     color: Color,
     fontWeight: FontWeight = FontWeight.Bold,
     fontSize: TextUnit = 20.sp
 ) {
     Text(
         text = text,
-        modifier = Modifier
-            .padding(20.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         textAlign = TextAlign.Center,
         color = color,
         fontWeight = fontWeight,
@@ -68,8 +67,8 @@ fun CustomTxtField(
             )
         },
         onValueChange = { value.value = it },
-        label = { Text(text = label, fontSize = 20.sp) },
-        placeholder = { Text(text = placeholder) },
+        label = { Text(text = label, fontSize = 20.sp, fontWeight = FontWeight.Bold) },
+        placeholder = { Text(text = placeholder, fontSize = 17.sp, fontWeight = FontWeight.Bold) },
         modifier = modifier,
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -77,13 +76,13 @@ fun CustomTxtField(
 }
 
 @Composable
-fun CustomElevatedBtn(text: String, onClick: () -> Unit) {
+fun CustomElevatedBtn(text: String, modifier: Modifier, onClick: () -> Unit) {
     ElevatedButton(
         onClick = { onClick() }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = Color(0xFFB34086)
         ),
         contentPadding = PaddingValues(50.dp, 20.dp),
-        modifier = Modifier.padding(20.dp)
+        modifier = modifier
     ) {
         Text(
             text,

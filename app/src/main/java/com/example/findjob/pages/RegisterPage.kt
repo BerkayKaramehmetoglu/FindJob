@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -63,7 +64,12 @@ fun RegisterPage(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CustomText("Kayıt Ekranı", Color(0xFFB34086), fontSize = 40.sp)
+                CustomText(
+                    text = "Kayıt Ekranı", color = Color(0xFFB34086), modifier = Modifier
+                        .padding(20.dp)
+                        .fillMaxWidth(),
+                    fontSize = 40.sp
+                )
                 CustomTxtField(
                     value = email,
                     label = "Email Giriniz",
@@ -90,7 +96,7 @@ fun RegisterPage(
                     keyboardType = KeyboardType.Password,
                     modifier = Modifier.padding(10.dp)
                 )
-                CustomElevatedBtn(onClick = {
+                CustomElevatedBtn(modifier = Modifier.padding(20.dp), onClick = {
                     viewModel.registerUser(
                         email = email.value,
                         password = password.value,
