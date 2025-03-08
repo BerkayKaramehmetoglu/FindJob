@@ -1,10 +1,12 @@
 package com.example.findjob
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +28,7 @@ import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
 import com.example.findjob.ui.theme.FindJobTheme
 import com.example.findjob.viewmodel.LoginUserViewModel
+import com.example.findjob.viewmodel.PostJobViewModel
 import com.example.findjob.viewmodel.RegisterUserViewModel
 import kotlinx.coroutines.launch
 
@@ -33,7 +36,9 @@ class MainActivity : ComponentActivity() {
 
     private val viewModelRegister: RegisterUserViewModel by viewModels()
     private val viewModelLogin: LoginUserViewModel by viewModels()
+    private val viewModelPostJob: PostJobViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,9 +59,11 @@ class MainActivity : ComponentActivity() {
                     contentWindowInsets = WindowInsets(0.dp),
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->
-                    Column(modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()) {
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
                         NavHost(
                             navController = navController,
                             startDestination = startDestination
@@ -82,7 +89,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable("postjob_screen") {
-                                PostJob(navController = navController)
+                                PostJob(navController = navController, viewModel = viewModelPostJob)
                             }
                         }
                     }

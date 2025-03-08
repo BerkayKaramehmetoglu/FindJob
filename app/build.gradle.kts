@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.protolite.well.known.types)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,4 +80,6 @@ dependencies {
 
     //DataStore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 }

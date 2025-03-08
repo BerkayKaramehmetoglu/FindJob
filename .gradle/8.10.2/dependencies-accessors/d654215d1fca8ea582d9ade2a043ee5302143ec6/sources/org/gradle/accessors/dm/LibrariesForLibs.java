@@ -23,6 +23,8 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     private final AbstractExternalDependencyFactory owner = this;
     private final AndroidxLibraryAccessors laccForAndroidxLibraryAccessors = new AndroidxLibraryAccessors(owner);
+    private final PlayLibraryAccessors laccForPlayLibraryAccessors = new PlayLibraryAccessors(owner);
+    private final ProtoliteLibraryAccessors laccForProtoliteLibraryAccessors = new ProtoliteLibraryAccessors(owner);
     private final VersionAccessors vaccForVersionAccessors = new VersionAccessors(providers, config);
     private final BundleAccessors baccForBundleAccessors = new BundleAccessors(objects, providers, config, attributesFactory, capabilityNotationParser);
     private final PluginAccessors paccForPluginAccessors = new PluginAccessors(providers, config);
@@ -47,6 +49,20 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
      */
     public AndroidxLibraryAccessors getAndroidx() {
         return laccForAndroidxLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>play</b>
+     */
+    public PlayLibraryAccessors getPlay() {
+        return laccForPlayLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>protolite</b>
+     */
+    public ProtoliteLibraryAccessors getProtolite() {
+        return laccForProtoliteLibraryAccessors;
     }
 
     /**
@@ -332,6 +348,80 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     }
 
+    public static class PlayLibraryAccessors extends SubDependencyFactory {
+        private final PlayServicesLibraryAccessors laccForPlayServicesLibraryAccessors = new PlayServicesLibraryAccessors(owner);
+
+        public PlayLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Group of libraries at <b>play.services</b>
+         */
+        public PlayServicesLibraryAccessors getServices() {
+            return laccForPlayServicesLibraryAccessors;
+        }
+
+    }
+
+    public static class PlayServicesLibraryAccessors extends SubDependencyFactory {
+
+        public PlayServicesLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>location</b> with <b>com.google.android.gms:play-services-location</b> coordinates and
+         * with version reference <b>playServicesLocation</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getLocation() {
+            return create("play.services.location");
+        }
+
+    }
+
+    public static class ProtoliteLibraryAccessors extends SubDependencyFactory {
+        private final ProtoliteWellLibraryAccessors laccForProtoliteWellLibraryAccessors = new ProtoliteWellLibraryAccessors(owner);
+
+        public ProtoliteLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Group of libraries at <b>protolite.well</b>
+         */
+        public ProtoliteWellLibraryAccessors getWell() {
+            return laccForProtoliteWellLibraryAccessors;
+        }
+
+    }
+
+    public static class ProtoliteWellLibraryAccessors extends SubDependencyFactory {
+        private final ProtoliteWellKnownLibraryAccessors laccForProtoliteWellKnownLibraryAccessors = new ProtoliteWellKnownLibraryAccessors(owner);
+
+        public ProtoliteWellLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Group of libraries at <b>protolite.well.known</b>
+         */
+        public ProtoliteWellKnownLibraryAccessors getKnown() {
+            return laccForProtoliteWellKnownLibraryAccessors;
+        }
+
+    }
+
+    public static class ProtoliteWellKnownLibraryAccessors extends SubDependencyFactory {
+
+        public ProtoliteWellKnownLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>types</b> with <b>com.google.firebase:protolite-well-known-types</b> coordinates and
+         * with version reference <b>protoliteWellKnownTypes</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getTypes() {
+            return create("protolite.well.known.types");
+        }
+
+    }
+
     public static class VersionAccessors extends VersionFactory  {
 
         public VersionAccessors(ProviderFactory providers, DefaultVersionCatalog config) { super(providers, config); }
@@ -435,6 +525,26 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          * This version was declared in catalog libs.versions.toml
          */
         public Provider<String> getPlayServicesDtdi() { return getVersion("playServicesDtdi"); }
+
+        /**
+         * Version alias <b>playServicesLocation</b> with value <b>21.3.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getPlayServicesLocation() { return getVersion("playServicesLocation"); }
+
+        /**
+         * Version alias <b>protoliteWellKnownTypes</b> with value <b>18.0.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getProtoliteWellKnownTypes() { return getVersion("protoliteWellKnownTypes"); }
 
     }
 
