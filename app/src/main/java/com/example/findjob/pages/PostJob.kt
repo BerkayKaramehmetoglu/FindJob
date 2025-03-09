@@ -1,14 +1,6 @@
 package com.example.findjob.pages
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.os.Build
-import android.os.Looper
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -20,7 +12,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
@@ -33,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -41,7 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,26 +49,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.findjob.R
 import com.example.findjob.viewmodel.PostJobViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import java.util.Locale
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostJob(navController: NavController, viewModel: PostJobViewModel) {
+fun PostJob(
+    navController: NavController,
+    viewModel: PostJobViewModel,
+    snackbarHostState: SnackbarHostState,
+) {
     val context = LocalContext.current
     val locationText by viewModel.locationText
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.initializeLocationClient(context)
@@ -128,6 +120,7 @@ fun PostJob(navController: NavController, viewModel: PostJobViewModel) {
             val jobTitle = remember { mutableStateOf("") }
             val jobDesc = remember { mutableStateOf("") }
             val jobPrice = remember { mutableStateOf("") }
+            val jobAdrs = remember { mutableStateOf("") }
 
             OutlinedCard(
                 colors = CardDefaults.cardColors(
@@ -148,18 +141,22 @@ fun PostJob(navController: NavController, viewModel: PostJobViewModel) {
                         contentDescription = null,
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxHeight(0.05f)
+                            .padding(20.dp)
                             .clickable { /* Kamera İzinleri Alınacak */ }
                     )
 
-                    VerticalDivider(color = Color.Black, modifier = Modifier.fillMaxHeight(0.1f))
+                    VerticalDivider(
+                        color = Color.Black, modifier = Modifier
+                            .height(40.dp)
+                            .width(1.dp)
+                    )
 
                     Icon(
                         painter = painterResource(R.drawable.baseline_insert_photo_24),
                         contentDescription = null,
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxHeight(0.05f)
+                            .padding(20.dp)
                             .clickable { /* Galeri İzinleri Alınacak*/ }
                     )
                 }
@@ -209,19 +206,27 @@ fun PostJob(navController: NavController, viewModel: PostJobViewModel) {
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     CustomText(
-                        text = locationText, color = Color.Black,
+                        text = locationText,
+                        color = Color.Black,
                         modifier = Modifier
+                            .weight(1f)
                             .padding(20.dp),
-                        fontSize = 20.sp,
                     )
 
-                    VerticalDivider(color = Color.Black, modifier = Modifier.fillMaxHeight(0.22f))
+                    VerticalDivider(
+                        color = Color.Black, modifier = Modifier
+                            .height(40.dp)
+                            .width(1.dp)
+                    )
 
                     FilledTonalButton(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(20.dp),
                         onClick = {
                             viewModel.requestCurrentLocation(context)
                         },
@@ -245,11 +250,27 @@ fun PostJob(navController: NavController, viewModel: PostJobViewModel) {
                     .fillMaxWidth()
                     .padding(20.dp),
                 onClick = {
-                    // ilan oluşturacak kod yazılacak
-                    //ilan uygulamaya giren uid ile firebase e post edilecek ve öyle kaydedilecek
+                    viewModel.postJob(
+                        context = context,
+                        jobTitle = jobTitle.value,
+                        jobDesc = jobDesc.value,
+                        jobPrice = jobPrice.value
+                    )
                 }
             )
 
+        }
+    }
+
+    LaunchedEffect(viewModel.message.value) {
+        viewModel.message.value?.let { message ->
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.message.value = null
+            }
         }
     }
 }

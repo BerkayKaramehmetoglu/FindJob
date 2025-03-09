@@ -1,31 +1,68 @@
 package com.example.findjob.viewmodel
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Build
 import android.os.Looper
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.State
-import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewModelScope
+import com.example.findjob.datastore.getUserSession
+import com.example.findjob.model.PostJob
+import com.example.findjob.pages.PostJob
+import com.example.findjob.service.Services
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class PostJobViewModel : ViewModel() {
-    private val _locationText = mutableStateOf("Konum Alınıyor")
+    val message = mutableStateOf<String?>(null)
+    private val _locationText = mutableStateOf("Konum")
     val locationText: State<String> = _locationText
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    fun postJob(
+        context: Context,
+        jobTitle: String,
+        jobDesc: String,
+        jobPrice: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (_locationText.value != "Konum") {
+                    val uid = getUserSession(context)
+                    val response = Services.userService.postJob(
+                        PostJob(
+                            uid!!,
+                            jobTitle,
+                            jobDesc,
+                            jobPrice,
+                            _locationText.value
+                        )
+                    )
+                    if (response.isSuccessful) {
+                        message.value = response.body()?.message
+                    } else {
+                        message.value = response.body()?.message
+                    }
+                }else{
+                    message.value = "Konum Al Tuşuna Basınız"
+                }
+            } catch (e: Exception) {
+                println("Bağlantı hatası: ${e.localizedMessage}")
+            }
+        }
+    }
 
     fun initializeLocationClient(context: Context) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -48,7 +85,7 @@ class PostJobViewModel : ViewModel() {
                         return
                     }
                 }
-                _locationText.value = "Konum alınamadı (requestLocationUpdates)"
+                _locationText.value = "Konum alınamadı"
             }
         }
 
@@ -79,7 +116,7 @@ class PostJobViewModel : ViewModel() {
                         firstAddress.locality ?: firstAddress.adminArea ?: "Şehir bilgisi yok"
                     val streetName = firstAddress.thoroughfare ?: "Sokak bilgisi yok"
 
-                    onResult("$cityName, $countryName ($streetName)")
+                    onResult("$cityName/$countryName\n$streetName")
                 } else {
                     onResult("Adres bilgisi alınamadı")
                 }

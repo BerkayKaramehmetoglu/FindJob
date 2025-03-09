@@ -1,6 +1,7 @@
 package com.example.findjob.service
 
 import com.example.findjob.model.LoginUser
+import com.example.findjob.model.PostJob
 import com.example.findjob.model.RegisterUser
 import com.example.findjob.model.ResponseMessage
 import retrofit2.Response
@@ -14,4 +15,7 @@ interface ServicesApi {
 
     @POST("api/signinuser")
     suspend fun loginUser(@Body request: LoginUser): Response<ResponseMessage>
+
+    @POST("api/postjob")
+    suspend fun postJob(@Body request: PostJob): Response<ResponseMessage>
 }

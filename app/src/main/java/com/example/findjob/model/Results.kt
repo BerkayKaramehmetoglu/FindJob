@@ -1,3 +1,3 @@
 package com.example.findjob.model
 
-data class Results(val success: Boolean, val uid: String, val email: String)
+data class Results(val success: Boolean, val uid: String)
