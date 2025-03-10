@@ -3,6 +3,7 @@ package com.example.findjob.viewmodel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import androidx.annotation.RequiresApi
@@ -12,7 +13,6 @@ import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
 import com.example.findjob.datastore.getUserSession
 import com.example.findjob.model.PostJob
-import com.example.findjob.pages.PostJob
 import com.example.findjob.service.Services
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -26,8 +26,16 @@ import java.util.Locale
 
 class PostJobViewModel : ViewModel() {
     val message = mutableStateOf<String?>(null)
+
     private val _locationText = mutableStateOf("Konum")
     val locationText: State<String> = _locationText
+
+    private var _imageUri = mutableStateOf<Uri?>(null)
+    val imageUri: State<Uri?> = _imageUri
+
+    fun setImageUri(uri: Uri?) {
+        _imageUri.value = uri
+    }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -55,8 +63,8 @@ class PostJobViewModel : ViewModel() {
                     } else {
                         message.value = response.body()?.message
                     }
-                }else{
-                    message.value = "Konum Al Tuşuna Basınız"
+                } else {
+                    message.value = "Konum Al' a Basınız"
                 }
             } catch (e: Exception) {
                 println("Bağlantı hatası: ${e.localizedMessage}")

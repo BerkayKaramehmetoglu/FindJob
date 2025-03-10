@@ -82,4 +82,7 @@ dependencies {
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

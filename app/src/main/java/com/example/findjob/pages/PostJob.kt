@@ -1,8 +1,12 @@
 package com.example.findjob.pages
 
+import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +18,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
@@ -38,11 +45,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.findjob.R
 import com.example.findjob.viewmodel.PostJobViewModel
 import kotlinx.coroutines.launch
@@ -65,6 +77,15 @@ fun PostJob(
     val context = LocalContext.current
     val locationText by viewModel.locationText
     val coroutineScope = rememberCoroutineScope()
+
+    val imageUri by viewModel.imageUri
+    var show by remember { mutableStateOf(true) }
+    
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        viewModel.setImageUri(uri)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.initializeLocationClient(context)
@@ -120,7 +141,6 @@ fun PostJob(
             val jobTitle = remember { mutableStateOf("") }
             val jobDesc = remember { mutableStateOf("") }
             val jobPrice = remember { mutableStateOf("") }
-            val jobAdrs = remember { mutableStateOf("") }
 
             OutlinedCard(
                 colors = CardDefaults.cardColors(
@@ -132,33 +152,49 @@ fun PostJob(
                     .padding(20.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_camera_alt_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(20.dp)
-                            .clickable { /* Kamera İzinleri Alınacak */ }
-                    )
+                    if (show || imageUri == null) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_camera_alt_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { /* Kamera İzinleri Alınacak */ }
+                        )
 
-                    VerticalDivider(
-                        color = Color.Black, modifier = Modifier
-                            .height(40.dp)
-                            .width(1.dp)
-                    )
-
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_insert_photo_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(20.dp)
-                            .clickable { /* Galeri İzinleri Alınacak*/ }
-                    )
+                        VerticalDivider(
+                            color = Color.Black, modifier = Modifier
+                                .height(40.dp)
+                                .width(1.dp)
+                        )
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_insert_photo_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    pickImageLauncher.launch("image/*");
+                                    show = false
+                                }
+                        )
+                    } else {
+                        imageUri?.let {
+                            Image(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .clickable { show = true },
+                                contentScale = ContentScale.Crop,
+                                painter = rememberAsyncImagePainter(it),
+                                contentDescription = null
+                            )
+                        }
+                    }
                 }
             }
 

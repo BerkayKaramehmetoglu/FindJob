@@ -26,6 +26,7 @@ import com.example.findjob.pages.LoginPage
 import com.example.findjob.pages.MainPage
 import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
+import com.example.findjob.pages.Test
 import com.example.findjob.ui.theme.FindJobTheme
 import com.example.findjob.viewmodel.LoginUserViewModel
 import com.example.findjob.viewmodel.PostJobViewModel
@@ -95,6 +96,10 @@ class MainActivity : ComponentActivity() {
                                     snackbarHostState = snackbarHostState
                                 )
                             }
+
+                            composable("test_screen") {
+                                Test(navController = navController)
+                            }
                         }
                     }
                 }
@@ -102,6 +107,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-/*eksikler uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor
-kayan menude yazıya tıklanınca sayfa değiştiriyor onun yerine butona basınca değiştirmeli
- */
+/*eksikler
+uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor
+ilan oluştur sayfasında butona basılınca boş olamsına rağmen Konum Al butonuna bas uyarısını düzelt
+*/
