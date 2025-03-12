@@ -18,4 +18,5 @@ interface ServicesApi {
 
     @POST("api/postjob")
     suspend fun postJob(@Body request: PostJob): Response<ResponseMessage>
+
 }

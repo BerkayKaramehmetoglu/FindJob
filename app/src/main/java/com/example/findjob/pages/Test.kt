@@ -27,10 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import java.util.UUID
 
 @Composable
 fun Test(navController: NavController) {
     //val context = LocalContext.current
+    val uuid = UUID.randomUUID()
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     val pickImageLauncher = rememberLauncherForActivityResult(

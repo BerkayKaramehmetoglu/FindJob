@@ -5,5 +5,6 @@ data class PostJob(
     val jobTitle: String,
     val jobDesc: String,
     val jobPrice: String,
-    val jobAdrs: String
+    val jobAdrs: String?,
+    val image: String
 )

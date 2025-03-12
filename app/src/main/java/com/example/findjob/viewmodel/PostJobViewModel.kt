@@ -23,6 +23,7 @@ import com.google.android.gms.location.Priority
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
+import android.util.Base64
 
 class PostJobViewModel : ViewModel() {
     val message = mutableStateOf<String?>(null)
@@ -37,34 +38,39 @@ class PostJobViewModel : ViewModel() {
         _imageUri.value = uri
     }
 
+    fun encodeImageToBase64(context: Context, uri: Uri): String? {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val byteArray = inputStream?.readBytes()
+        return byteArray?.let { Base64.encodeToString(it, Base64.DEFAULT) }
+    }
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     fun postJob(
         context: Context,
         jobTitle: String,
         jobDesc: String,
-        jobPrice: String
+        jobPrice: String,
+        image: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (_locationText.value != "Konum") {
-                    val uid = getUserSession(context)
-                    val response = Services.userService.postJob(
-                        PostJob(
-                            uid!!,
-                            jobTitle,
-                            jobDesc,
-                            jobPrice,
-                            _locationText.value
-                        )
+                val location = if (_locationText.value == "Konum") null else _locationText.value
+                val uid = getUserSession(context)
+                val response = Services.userService.postJob(
+                    PostJob(
+                        uid!!,
+                        jobTitle,
+                        jobDesc,
+                        jobPrice,
+                        location,
+                        image
                     )
-                    if (response.isSuccessful) {
-                        message.value = response.body()?.message
-                    } else {
-                        message.value = response.body()?.message
-                    }
+                )
+                if (response.isSuccessful) {
+                    message.value = response.body()?.message
                 } else {
-                    message.value = "Konum Al' a Basınız"
+                    message.value = response.body()?.message
                 }
             } catch (e: Exception) {
                 println("Bağlantı hatası: ${e.localizedMessage}")

@@ -80,11 +80,15 @@ fun PostJob(
 
     val imageUri by viewModel.imageUri
     var show by remember { mutableStateOf(true) }
-    
+    var image by remember { mutableStateOf<String?>("") }
+
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        viewModel.setImageUri(uri)
+        if (uri != null) {
+            viewModel.setImageUri(uri)
+            image = viewModel.encodeImageToBase64(context, uri)
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -290,11 +294,11 @@ fun PostJob(
                         context = context,
                         jobTitle = jobTitle.value,
                         jobDesc = jobDesc.value,
-                        jobPrice = jobPrice.value
+                        jobPrice = jobPrice.value,
+                        image = image!!
                     )
                 }
             )
-
         }
     }
 
