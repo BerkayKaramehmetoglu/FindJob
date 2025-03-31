@@ -2,6 +2,7 @@ package com.example.findjob.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
@@ -24,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 import android.util.Base64
+import java.io.ByteArrayOutputStream
 
 class PostJobViewModel : ViewModel() {
     val message = mutableStateOf<String?>(null)
@@ -38,10 +40,28 @@ class PostJobViewModel : ViewModel() {
         _imageUri.value = uri
     }
 
-    fun encodeImageToBase64(context: Context, uri: Uri): String? {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val byteArray = inputStream?.readBytes()
-        return byteArray?.let { Base64.encodeToString(it, Base64.DEFAULT) }
+    private var _imageCamera = mutableStateOf<Bitmap?>(null)
+    val imageCamera: State<Bitmap?> = _imageCamera
+
+    fun setImageCamera(bitmap: Bitmap?){
+        _imageCamera.value = bitmap
+    }
+
+    fun encodeImageToBase64(context: Context, uri: Uri? = null, bitmap: Bitmap? = null): String? {
+        return when {
+            uri != null -> {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                val byteArray = inputStream?.readBytes()
+                byteArray?.let { Base64.encodeToString(it, Base64.DEFAULT) }
+            }
+            bitmap != null -> {
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                val byteArray = outputStream.toByteArray()
+                Base64.encodeToString(byteArray, Base64.DEFAULT)
+            }
+            else -> null
+        }
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient

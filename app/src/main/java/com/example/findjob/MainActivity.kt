@@ -108,6 +108,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 /*eksikler
+herhangi bir input yapılığ request atıldıktan sonra input alanını temizle
+kamera ve galeri izinlerini kullanıcıya göster
+response mesajlarını 400 döndür hata olanları
+backende .env ve .env.example firebase için kullanılmalı
+fotoğraf binary kullanılmalı
 uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor
-ilan oluştur sayfasında butona basılınca boş olamsına rağmen Konum Al butonuna bas uyarısını düzelt
 */

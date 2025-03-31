@@ -1,5 +1,6 @@
 package com.example.findjob.pages
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -79,6 +81,7 @@ fun PostJob(
     val coroutineScope = rememberCoroutineScope()
 
     val imageUri by viewModel.imageUri
+    val imageCamera by viewModel.imageCamera
     var show by remember { mutableStateOf(true) }
     var image by remember { mutableStateOf<String?>("") }
 
@@ -87,9 +90,17 @@ fun PostJob(
     ) { uri: Uri? ->
         if (uri != null) {
             viewModel.setImageUri(uri)
-            image = viewModel.encodeImageToBase64(context, uri)
+            image = viewModel.encodeImageToBase64(context, uri, null)
         }
     }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+            if (bitmap != null) {
+                viewModel.setImageCamera(bitmap)
+                image = viewModel.encodeImageToBase64(context, null, bitmap)
+            }
+        }
 
     LaunchedEffect(Unit) {
         viewModel.initializeLocationClient(context)
@@ -162,13 +173,16 @@ fun PostJob(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (show || imageUri == null) {
+                    if (show && (imageUri == null || imageCamera == null)) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_camera_alt_24),
                             contentDescription = null,
                             modifier = Modifier
                                 .weight(1f)
-                                .clickable { /* Kamera İzinleri Alınacak */ }
+                                .clickable {
+                                    cameraLauncher.launch(null)
+                                    show = false
+                                }
                         )
 
                         VerticalDivider(
@@ -192,9 +206,27 @@ fun PostJob(
                                 modifier = Modifier
                                     .size(150.dp)
                                     .clip(RoundedCornerShape(20.dp))
-                                    .clickable { show = true },
+                                    .clickable {
+                                        show = true
+                                        viewModel.setImageUri(null)
+                                    },
                                 contentScale = ContentScale.Crop,
                                 painter = rememberAsyncImagePainter(it),
+                                contentDescription = null
+                            )
+                        }
+
+                        imageCamera?.let {
+                            Image(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .clickable {
+                                        show = true
+                                        viewModel.setImageCamera(null)
+                                    },
+                                contentScale = ContentScale.Crop,
+                                bitmap = it.asImageBitmap(),
                                 contentDescription = null
                             )
                         }
