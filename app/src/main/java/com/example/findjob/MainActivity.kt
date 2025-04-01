@@ -18,12 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.findjob.datastore.getUserSession
 import com.example.findjob.pages.LoginPage
 import com.example.findjob.pages.MainPage
+import com.example.findjob.pages.MyJob
 import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
 import com.example.findjob.pages.Test
@@ -95,6 +97,10 @@ class MainActivity : ComponentActivity() {
                                     viewModel = viewModelPostJob,
                                     snackbarHostState = snackbarHostState
                                 )
+                            }
+
+                            composable("myjob_screen") {
+                                MyJob(navController = navController)
                             }
 
                             composable("test_screen") {

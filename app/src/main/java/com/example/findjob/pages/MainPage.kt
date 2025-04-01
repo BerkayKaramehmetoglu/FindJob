@@ -122,7 +122,7 @@ fun MainPage(
                                 modifier = Modifier.size(30.dp)
                             )
                         },
-                        onClick = { /* Handle click */ }
+                        onClick = { navController.navigate("myjob_screen")  }
                     )
                     HorizontalDivider(color = Color.Black)
                     NavigationDrawerItem(
