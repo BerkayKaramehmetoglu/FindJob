@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,10 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.findjob.R
+import com.example.findjob.model.GetJobs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyJob(navController: NavController) {
+fun MyJob(navController: NavController, jobList: List<GetJobs>) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -87,7 +89,7 @@ fun MyJob(navController: NavController) {
                 .fillMaxSize()
                 .background(Color(0xFFB34086))
         ) {
-            items(15) {
+            items(jobList) { job ->
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 10.dp
@@ -106,7 +108,6 @@ fun MyJob(navController: NavController) {
                             contentDescription = null,
                             tint = Color.Red,
                         )
-
                         Column {
                             Text(
                                 modifier = Modifier.padding(start = 30.dp),
@@ -129,12 +130,12 @@ fun MyJob(navController: NavController) {
                         Spacer(modifier = Modifier.padding(start = 50.dp))
 
                         Column {
-                            Text("İŞ BAŞLIĞI")
+                            Text(job.jobTitle.uppercase())
                             Spacer(modifier = Modifier.padding(5.dp))
-                            Text(modifier = Modifier.padding(top = 60.dp), text = "İŞ AÇIKLAMA")
+                            Text(modifier = Modifier.padding(top = 60.dp), text = job.jobDesc)
                             Spacer(modifier = Modifier.padding(5.dp))
-                            Text(modifier = Modifier.padding(top = 60.dp), text = "Sakarya/Türkiye")
-                            Text(modifier = Modifier.padding(start = 30.dp), text = "1200 TL")
+                            Text(modifier = Modifier.padding(top = 60.dp), text = job.jobAdrs)
+                            Text(modifier = Modifier.padding(start = 30.dp), text = job.jobPrice)
                         }
                         Spacer(modifier = Modifier.padding(15.dp))
                         Column {

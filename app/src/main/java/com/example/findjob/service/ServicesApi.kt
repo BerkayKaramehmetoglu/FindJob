@@ -1,11 +1,13 @@
 package com.example.findjob.service
 
+import com.example.findjob.model.GetJobsResponse
 import com.example.findjob.model.LoginUser
 import com.example.findjob.model.PostJob
 import com.example.findjob.model.RegisterUser
 import com.example.findjob.model.ResponseMessage
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ServicesApi {
@@ -19,4 +21,6 @@ interface ServicesApi {
     @POST("api/postjob")
     suspend fun postJob(@Body request: PostJob): Response<ResponseMessage>
 
+    @GET("api/getjobs")
+    suspend fun getJobs(): Response<GetJobsResponse>
 }

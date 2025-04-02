@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -30,6 +31,7 @@ import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
 import com.example.findjob.pages.Test
 import com.example.findjob.ui.theme.FindJobTheme
+import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.LoginUserViewModel
 import com.example.findjob.viewmodel.PostJobViewModel
 import com.example.findjob.viewmodel.RegisterUserViewModel
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
     private val viewModelRegister: RegisterUserViewModel by viewModels()
     private val viewModelLogin: LoginUserViewModel by viewModels()
     private val viewModelPostJob: PostJobViewModel by viewModels()
+    private val viewModelGetJobs: GetJobsViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +53,7 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val navController = rememberNavController()
                 var startDestination by remember { mutableStateOf("login_screen") }
+                val context = LocalContext.current
 
                 LaunchedEffect(Unit) {
                     lifecycleScope.launch {
@@ -100,7 +104,11 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable("myjob_screen") {
-                                MyJob(navController = navController)
+                                viewModelGetJobs.getJobs(user = true, context = context)
+                                MyJob(
+                                    navController = navController,
+                                    jobList = viewModelGetJobs.jobsList.value
+                                )
                             }
 
                             composable("test_screen") {
@@ -114,6 +122,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 /*eksikler
+iş ilanı oluşturulurken reim çekmediği halde null dönüyor
 herhangi bir input yapılığ request atıldıktan sonra input alanını temizle
 kamera ve galeri izinlerini kullanıcıya göster
 response mesajlarını 400 döndür hata olanları
