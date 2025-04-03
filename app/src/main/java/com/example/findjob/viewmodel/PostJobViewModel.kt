@@ -43,7 +43,7 @@ class PostJobViewModel : ViewModel() {
     private var _imageCamera = mutableStateOf<Bitmap?>(null)
     val imageCamera: State<Bitmap?> = _imageCamera
 
-    fun setImageCamera(bitmap: Bitmap?){
+    fun setImageCamera(bitmap: Bitmap?) {
         _imageCamera.value = bitmap
     }
 
@@ -54,12 +54,14 @@ class PostJobViewModel : ViewModel() {
                 val byteArray = inputStream?.readBytes()
                 byteArray?.let { Base64.encodeToString(it, Base64.DEFAULT) }
             }
+
             bitmap != null -> {
                 val outputStream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 val byteArray = outputStream.toByteArray()
                 Base64.encodeToString(byteArray, Base64.DEFAULT)
             }
+
             else -> null
         }
     }
@@ -148,9 +150,8 @@ class PostJobViewModel : ViewModel() {
                     val countryName = firstAddress.countryName ?: "Ülke bilgisi yok"
                     val cityName =
                         firstAddress.locality ?: firstAddress.adminArea ?: "Şehir bilgisi yok"
-                    val streetName = firstAddress.thoroughfare ?: "Sokak bilgisi yok"
 
-                    onResult("$cityName/$countryName\n$streetName")
+                    onResult("$cityName/$countryName")
                 } else {
                     onResult("Adres bilgisi alınamadı")
                 }

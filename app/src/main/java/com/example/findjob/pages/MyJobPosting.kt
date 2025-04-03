@@ -2,12 +2,13 @@ package com.example.findjob.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,11 +29,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,51 +105,87 @@ fun MyJob(navController: NavController, jobList: List<GetJobs>) {
                         .fillMaxWidth()
                         .padding(10.dp)
                 ) {
-                    Row(modifier = Modifier.padding(10.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxSize()
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_circle_24),
                             contentDescription = null,
                             tint = Color.Red,
                         )
-                        Column {
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .weight(1f)
+                        ) {
                             Text(
-                                modifier = Modifier.padding(start = 30.dp),
-                                text = "1/04/2025"
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                text = job.currentTime,
+                                textAlign = TextAlign.Center
                             )
-                            Spacer(modifier = Modifier.padding(5.dp))
                             Image(
                                 painter = painterResource(id = R.drawable.ic_launcher_background),
                                 contentDescription = null,
                                 modifier = Modifier
+                                    .padding(10.dp)
                                     .size(150.dp)
                                     .clip(RoundedCornerShape(20.dp))
+                                    .align(Alignment.CenterHorizontally)
                             )
-                            Spacer(modifier = Modifier.padding(5.dp))
                             Text(
-                                modifier = Modifier.padding(start = 10.dp),
-                                text = "Görüntülenme: 0"
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                text = "Görüntülenme: 0",
+                                textAlign = TextAlign.Center
                             )
                         }
-                        Spacer(modifier = Modifier.padding(start = 50.dp))
-
-                        Column {
-                            Text(job.jobTitle.uppercase())
-                            Spacer(modifier = Modifier.padding(5.dp))
-                            Text(modifier = Modifier.padding(top = 60.dp), text = job.jobDesc)
-                            Spacer(modifier = Modifier.padding(5.dp))
-                            Text(modifier = Modifier.padding(top = 60.dp), text = job.jobAdrs)
-                            Text(modifier = Modifier.padding(start = 30.dp), text = job.jobPrice)
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(bottom = 5.dp),
+                                text = job.jobTitle.uppercase(),
+                                textAlign = TextAlign.Center
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(130.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = job.jobDesc,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            Text(
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                text = job.jobAdrs,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 10.dp),
+                                text = job.jobPrice,
+                                textAlign = TextAlign.Center
+                            )
                         }
-                        Spacer(modifier = Modifier.padding(15.dp))
-                        Column {
+                        Column(modifier = Modifier.padding(start = 10.dp)) {
                             Icon(
-                                Icons.Rounded.Clear,
+                                modifier = Modifier.padding(bottom = 10.dp),
+                                imageVector = Icons.Rounded.Clear,
                                 contentDescription = null,
                                 tint = Color.Red
                             )
-                            Spacer(modifier = Modifier.padding(5.dp))
                             Icon(
-                                Icons.Rounded.Create,
+                                modifier = Modifier,
+                                imageVector = Icons.Rounded.Create,
                                 contentDescription = null,
                                 tint = Color.Yellow
                             )
