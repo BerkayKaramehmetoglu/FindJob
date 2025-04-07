@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,6 +30,7 @@ import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
 import com.example.findjob.pages.Test
 import com.example.findjob.ui.theme.FindJobTheme
+import com.example.findjob.viewmodel.DeleteJobViewModel
 import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.LoginUserViewModel
 import com.example.findjob.viewmodel.PostJobViewModel
@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
     private val viewModelLogin: LoginUserViewModel by viewModels()
     private val viewModelPostJob: PostJobViewModel by viewModels()
     private val viewModelGetJobs: GetJobsViewModel by viewModels()
+    private val viewModelDeleteJob: DeleteJobViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,7 +108,8 @@ class MainActivity : ComponentActivity() {
                                 viewModelGetJobs.getJobs(user = true, context = context)
                                 MyJob(
                                     navController = navController,
-                                    jobList = viewModelGetJobs.jobsList.value
+                                    jobList = viewModelGetJobs.jobsList.value,
+                                    viewModel = viewModelDeleteJob
                                 )
                             }
 
@@ -122,11 +124,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 /*eksikler
-iş ilanı oluşturulurken reim çekmediği halde null dönüyor
-herhangi bir input yapılığ request atıldıktan sonra input alanını temizle
-kamera ve galeri izinlerini kullanıcıya göster
-response mesajlarını 400 döndür hata olanları
-backende .env ve .env.example firebase için kullanılmalı
-fotoğraf binary kullanılmalı
-uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor
+viewmodel sayfasında messageları kullanıcıya göster,
+iş ilanı oluşturulurken reim çekmediği halde null dönüyor,
+herhangi bir input yapılığ request atıldıktan sonra input alanını temizle,
+kamera ve galeri izinlerini kullanıcıya göster,
+response mesajlarını 400 döndür hata olanları,
+backende .env ve .env.example firebase için kullanılmalı,
+fotoğraf binary kullanılmalı,
+uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor,
 */

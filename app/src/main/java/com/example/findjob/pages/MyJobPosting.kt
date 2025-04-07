@@ -1,7 +1,7 @@
 package com.example.findjob.pages
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,13 +39,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.findjob.R
 import com.example.findjob.model.GetJobs
+import com.example.findjob.viewmodel.DeleteJobViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyJob(navController: NavController, jobList: List<GetJobs>) {
+fun MyJob(navController: NavController, jobList: List<GetJobs>, viewModel: DeleteJobViewModel) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -125,8 +128,8 @@ fun MyJob(navController: NavController, jobList: List<GetJobs>) {
                                 text = job.currentTime,
                                 textAlign = TextAlign.Center
                             )
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_background),
+                            AsyncImage(
+                                model = job.downloadUrl,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .padding(10.dp)
@@ -178,7 +181,11 @@ fun MyJob(navController: NavController, jobList: List<GetJobs>) {
                         }
                         Column(modifier = Modifier.padding(start = 10.dp)) {
                             Icon(
-                                modifier = Modifier.padding(bottom = 10.dp),
+                                modifier = Modifier
+                                    .padding(bottom = 10.dp)
+                                    .clickable {
+                                        viewModel.deleteJob(job.id)
+                                    },
                                 imageVector = Icons.Rounded.Clear,
                                 contentDescription = null,
                                 tint = Color.Red

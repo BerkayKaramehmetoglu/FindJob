@@ -7,8 +7,10 @@ import com.example.findjob.model.RegisterUser
 import com.example.findjob.model.ResponseMessage
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ServicesApi {
 
@@ -23,4 +25,8 @@ interface ServicesApi {
 
     @GET("api/getjobs")
     suspend fun getJobs(): Response<GetJobsResponse>
+
+    @DELETE("api/deletejob/{id}")
+    suspend fun deleteJob(@Path("id") id: String): Response<ResponseMessage>
+
 }

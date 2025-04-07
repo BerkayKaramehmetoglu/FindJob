@@ -27,6 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.findjob.R
+import com.example.findjob.utils.CustomElevatedBtn
+import com.example.findjob.utils.CustomText
+import com.example.findjob.utils.CustomTxtField
 import com.example.findjob.viewmodel.RegisterUserViewModel
 import kotlinx.coroutines.launch
 
