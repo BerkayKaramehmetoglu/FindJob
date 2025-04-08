@@ -26,9 +26,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,16 +47,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.findjob.R
 import com.example.findjob.model.GetJobs
+import com.example.findjob.utils.DialogWithImage
 import com.example.findjob.viewmodel.DeleteJobViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyJob(navController: NavController, jobList: List<GetJobs>, viewModel: DeleteJobViewModel) {
+fun MyJob(
+    navController: NavController,
+    jobList: List<GetJobs>,
+    viewModel: DeleteJobViewModel,
+    snackbarHostState: SnackbarHostState,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
@@ -191,15 +208,42 @@ fun MyJob(navController: NavController, jobList: List<GetJobs>, viewModel: Delet
                                 tint = Color.Red
                             )
                             Icon(
-                                modifier = Modifier,
+                                modifier = Modifier.clickable {
+                                    showDialog = true
+                                },
                                 imageVector = Icons.Rounded.Create,
                                 contentDescription = null,
                                 tint = Color.Yellow
                             )
+                            if (showDialog) {
+                                DialogWithImage(
+                                    onDismissRequest = {
+                                        showDialog = false
+                                    },
+                                    onConfirmation = {
+                                        println("Onaylama İşlemi")
+                                        showDialog = false
+                                    },
+                                    model = job.downloadUrl,
+                                    jobs = job
+                                )
+                            }
                         }
 
                     }
                 }
+            }
+        }
+    }
+
+    LaunchedEffect(viewModel.message.value) {
+        viewModel.message.value?.let { message ->
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+                viewModel.message.value = null
             }
         }
     }

@@ -10,4 +10,3 @@ data class GetJobs(
     val jobAdrs: String,
     val currentTime: String
 )
-

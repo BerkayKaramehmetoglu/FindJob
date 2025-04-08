@@ -28,7 +28,6 @@ import com.example.findjob.pages.MainPage
 import com.example.findjob.pages.MyJob
 import com.example.findjob.pages.PostJob
 import com.example.findjob.pages.RegisterPage
-import com.example.findjob.pages.Test
 import com.example.findjob.ui.theme.FindJobTheme
 import com.example.findjob.viewmodel.DeleteJobViewModel
 import com.example.findjob.viewmodel.GetJobsViewModel
@@ -109,12 +108,9 @@ class MainActivity : ComponentActivity() {
                                 MyJob(
                                     navController = navController,
                                     jobList = viewModelGetJobs.jobsList.value,
-                                    viewModel = viewModelDeleteJob
+                                    viewModel = viewModelDeleteJob,
+                                    snackbarHostState = snackbarHostState
                                 )
-                            }
-
-                            composable("test_screen") {
-                                Test(navController = navController)
                             }
                         }
                     }
@@ -124,10 +120,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 /*eksikler
-viewmodel sayfasında messageları kullanıcıya göster,
-iş ilanı oluşturulurken reim çekmediği halde null dönüyor,
-herhangi bir input yapılığ request atıldıktan sonra input alanını temizle,
-kamera ve galeri izinlerini kullanıcıya göster,
 response mesajlarını 400 döndür hata olanları,
 backende .env ve .env.example firebase için kullanılmalı,
 fotoğraf binary kullanılmalı,
