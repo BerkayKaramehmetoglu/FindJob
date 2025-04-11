@@ -119,14 +119,14 @@ fun CustomElevatedBtn(text: String, modifier: Modifier, onClick: () -> Unit) {
 @Composable
 fun DialogWithImage(
     onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
+    onConfirmation: (jobTitle: String, jobDesc: String, jobPrice: String, checked: Boolean) -> Unit,
     model: Any?,
     jobs: GetJobs
 ) {
-    var checked by remember { mutableStateOf(true) }
     var jobTitle by remember { mutableStateOf(jobs.jobTitle) }
     var jobDesc by remember { mutableStateOf(jobs.jobDesc) }
     var jobPrice by remember { mutableStateOf(jobs.jobPrice) }
+    var checked by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
@@ -199,7 +199,7 @@ fun DialogWithImage(
                         Text(color = Color.Red, text = "İptal Et")
                     }
                     TextButton(
-                        onClick = { onConfirmation() },
+                        onClick = { onConfirmation(jobTitle, jobDesc, jobPrice, checked) },
                         modifier = Modifier.padding(8.dp),
                     ) {
                         Text(color = Color(0xFF22bb33), text = "Güncelle")

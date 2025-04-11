@@ -47,12 +47,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.findjob.R
 import com.example.findjob.model.GetJobs
 import com.example.findjob.utils.DialogWithImage
 import com.example.findjob.viewmodel.DeleteJobViewModel
+import com.example.findjob.viewmodel.UpdateJobViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +62,8 @@ import kotlinx.coroutines.launch
 fun MyJob(
     navController: NavController,
     jobList: List<GetJobs>,
-    viewModel: DeleteJobViewModel,
+    viewModelDelete: DeleteJobViewModel,
+    viewModelUpdate: UpdateJobViewModel,
     snackbarHostState: SnackbarHostState,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -201,7 +204,7 @@ fun MyJob(
                                 modifier = Modifier
                                     .padding(bottom = 10.dp)
                                     .clickable {
-                                        viewModel.deleteJob(job.id)
+                                        viewModelDelete.deleteJob(job.id)
                                     },
                                 imageVector = Icons.Rounded.Clear,
                                 contentDescription = null,
@@ -220,8 +223,14 @@ fun MyJob(
                                     onDismissRequest = {
                                         showDialog = false
                                     },
-                                    onConfirmation = {
-                                        println("Onaylama İşlemi")
+                                    onConfirmation = { jobTitle, jobDesc, jobPrice, checked ->
+                                        viewModelUpdate.updateJob(
+                                            job.id,
+                                            jobTitle,
+                                            jobDesc,
+                                            jobPrice,
+                                            checked
+                                        )
                                         showDialog = false
                                     },
                                     model = job.downloadUrl,
@@ -236,14 +245,14 @@ fun MyJob(
         }
     }
 
-    LaunchedEffect(viewModel.message.value) {
-        viewModel.message.value?.let { message ->
+    LaunchedEffect(viewModelDelete.message.value) {
+        viewModelDelete.message.value?.let { message ->
             coroutineScope.launch {
                 snackbarHostState.showSnackbar(
                     message = message,
                     duration = SnackbarDuration.Short
                 )
-                viewModel.message.value = null
+                viewModelDelete.message.value = null
             }
         }
     }

@@ -34,6 +34,7 @@ import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.LoginUserViewModel
 import com.example.findjob.viewmodel.PostJobViewModel
 import com.example.findjob.viewmodel.RegisterUserViewModel
+import com.example.findjob.viewmodel.UpdateJobViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
     private val viewModelPostJob: PostJobViewModel by viewModels()
     private val viewModelGetJobs: GetJobsViewModel by viewModels()
     private val viewModelDeleteJob: DeleteJobViewModel by viewModels()
+    private val viewModelUpdateJob: UpdateJobViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +110,8 @@ class MainActivity : ComponentActivity() {
                                 MyJob(
                                     navController = navController,
                                     jobList = viewModelGetJobs.jobsList.value,
-                                    viewModel = viewModelDeleteJob,
+                                    viewModelDelete = viewModelDeleteJob,
+                                    viewModelUpdate = viewModelUpdateJob,
                                     snackbarHostState = snackbarHostState
                                 )
                             }
