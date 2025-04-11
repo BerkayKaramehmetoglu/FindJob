@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +55,7 @@ import com.example.findjob.R
 import com.example.findjob.model.GetJobs
 import com.example.findjob.utils.DialogWithImage
 import com.example.findjob.viewmodel.DeleteJobViewModel
+import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.UpdateJobViewModel
 import kotlinx.coroutines.launch
 
@@ -64,9 +66,11 @@ fun MyJob(
     jobList: List<GetJobs>,
     viewModelDelete: DeleteJobViewModel,
     viewModelUpdate: UpdateJobViewModel,
+    viewModelGetJobs: GetJobsViewModel,
     snackbarHostState: SnackbarHostState,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -136,7 +140,7 @@ fun MyJob(
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_circle_24),
                             contentDescription = null,
-                            tint = Color.Red,
+                            tint = if (!job.state) Color.Red else Color.Green,
                         )
                         Column(
                             modifier = Modifier
@@ -234,7 +238,8 @@ fun MyJob(
                                         showDialog = false
                                     },
                                     model = job.downloadUrl,
-                                    jobs = job
+                                    jobs = job,
+                                    check = job.state
                                 )
                             }
                         }
@@ -253,6 +258,19 @@ fun MyJob(
                     duration = SnackbarDuration.Short
                 )
                 viewModelDelete.message.value = null
+            }
+        }
+    }
+
+    LaunchedEffect(viewModelUpdate.message.value) {
+        viewModelUpdate.message.value?.let { message ->
+            coroutineScope.launch {
+                viewModelGetJobs.getJobs(user = true, context = context)
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+                viewModelUpdate.message.value = null
             }
         }
     }

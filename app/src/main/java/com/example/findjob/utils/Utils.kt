@@ -121,12 +121,13 @@ fun DialogWithImage(
     onDismissRequest: () -> Unit,
     onConfirmation: (jobTitle: String, jobDesc: String, jobPrice: String, checked: Boolean) -> Unit,
     model: Any?,
-    jobs: GetJobs
+    jobs: GetJobs,
+    check: Boolean
 ) {
     var jobTitle by remember { mutableStateOf(jobs.jobTitle) }
     var jobDesc by remember { mutableStateOf(jobs.jobDesc) }
     var jobPrice by remember { mutableStateOf(jobs.jobPrice) }
-    var checked by remember { mutableStateOf(false) }
+    var checked by remember { mutableStateOf(check) }
 
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(

@@ -112,6 +112,7 @@ class MainActivity : ComponentActivity() {
                                     jobList = viewModelGetJobs.jobsList.value,
                                     viewModelDelete = viewModelDeleteJob,
                                     viewModelUpdate = viewModelUpdateJob,
+                                    viewModelGetJobs = viewModelGetJobs,
                                     snackbarHostState = snackbarHostState
                                 )
                             }
