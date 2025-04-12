@@ -26,17 +26,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,16 +43,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.findjob.R
 import com.example.findjob.model.GetJobs
 import com.example.findjob.utils.DialogWithImage
+import com.example.findjob.utils.ObserveMessageAndRefresh
 import com.example.findjob.viewmodel.DeleteJobViewModel
 import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.UpdateJobViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,9 +63,8 @@ fun MyJob(
     viewModelGetJobs: GetJobsViewModel,
     snackbarHostState: SnackbarHostState,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
+    val showDialogMap = remember { mutableStateOf<Map<String, Boolean>>(emptyMap()) }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -176,7 +169,7 @@ fun MyJob(
                                 modifier = Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .padding(bottom = 5.dp),
-                                text = job.jobTitle.uppercase(),
+                                text = job.jobTitle,
                                 textAlign = TextAlign.Center
                             )
                             Box(
@@ -192,7 +185,7 @@ fun MyJob(
                             }
                             Text(
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                                text = job.jobAdrs,
+                                text = job.jobCity,
                                 textAlign = TextAlign.Center
                             )
                             Text(
@@ -216,16 +209,22 @@ fun MyJob(
                             )
                             Icon(
                                 modifier = Modifier.clickable {
-                                    showDialog = true
+                                    val currentDialogState = showDialogMap.value[job.id] ?: false
+                                    showDialogMap.value = showDialogMap.value.toMutableMap().apply {
+                                        put(job.id, !currentDialogState)
+                                    }
                                 },
                                 imageVector = Icons.Rounded.Create,
                                 contentDescription = null,
                                 tint = Color.Yellow
                             )
-                            if (showDialog) {
+                            if (showDialogMap.value[job.id] == true) {
                                 DialogWithImage(
                                     onDismissRequest = {
-                                        showDialog = false
+                                        showDialogMap.value =
+                                            showDialogMap.value.toMutableMap().apply {
+                                                put(job.id, false)
+                                            }
                                     },
                                     onConfirmation = { jobTitle, jobDesc, jobPrice, checked ->
                                         viewModelUpdate.updateJob(
@@ -235,7 +234,10 @@ fun MyJob(
                                             jobPrice,
                                             checked
                                         )
-                                        showDialog = false
+                                        showDialogMap.value =
+                                            showDialogMap.value.toMutableMap().apply {
+                                                put(job.id, false)
+                                            }
                                     },
                                     model = job.downloadUrl,
                                     jobs = job,
@@ -250,28 +252,21 @@ fun MyJob(
         }
     }
 
-    LaunchedEffect(viewModelDelete.message.value) {
-        viewModelDelete.message.value?.let { message ->
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
-                )
-                viewModelDelete.message.value = null
-            }
-        }
-    }
+    ObserveMessageAndRefresh(
+        message = viewModelDelete.message.value,
+        clearMessage = { viewModelDelete.message.value = null },
+        onSuccess = {
+            viewModelGetJobs.getJobs(user = true, context = context)
+        },
+        snackbarHostState = snackbarHostState
+    )
 
-    LaunchedEffect(viewModelUpdate.message.value) {
-        viewModelUpdate.message.value?.let { message ->
-            coroutineScope.launch {
-                viewModelGetJobs.getJobs(user = true, context = context)
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
-                )
-                viewModelUpdate.message.value = null
-            }
-        }
-    }
+    ObserveMessageAndRefresh(
+        message = viewModelUpdate.message.value,
+        clearMessage = { viewModelUpdate.message.value = null },
+        onSuccess = {
+            viewModelGetJobs.getJobs(user = true, context = context)
+        },
+        snackbarHostState = snackbarHostState
+    )
 }

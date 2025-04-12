@@ -100,7 +100,8 @@ class MainActivity : ComponentActivity() {
                             composable("postjob_screen") {
                                 PostJob(
                                     navController = navController,
-                                    viewModel = viewModelPostJob,
+                                    viewModelPostJob = viewModelPostJob,
+                                    viewModelGetJobs = viewModelGetJobs,
                                     snackbarHostState = snackbarHostState
                                 )
                             }

@@ -1,5 +1,7 @@
 package com.example.findjob.pages
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -39,7 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,12 +60,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.findjob.R
 import com.example.findjob.utils.CustomElevatedBtn
 import com.example.findjob.utils.CustomText
 import com.example.findjob.utils.CustomTxtField
+import com.example.findjob.utils.ObserveMessageAndRefresh
+import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.PostJobViewModel
 import kotlinx.coroutines.launch
 
@@ -73,37 +77,57 @@ import kotlinx.coroutines.launch
 @Composable
 fun PostJob(
     navController: NavController,
-    viewModel: PostJobViewModel,
+    viewModelPostJob: PostJobViewModel,
+    viewModelGetJobs: GetJobsViewModel,
     snackbarHostState: SnackbarHostState,
 ) {
     val context = LocalContext.current
-    val locationText by viewModel.locationText
-    val coroutineScope = rememberCoroutineScope()
+    val locationText by viewModelPostJob.locationText
 
-    val imageUri by viewModel.imageUri
-    val imageCamera by viewModel.imageCamera
-    var show by remember { mutableStateOf(true) }
+    val imageUri by viewModelPostJob.imageUri
+    val imageCamera by viewModelPostJob.imageCamera
     var image by remember { mutableStateOf<String?>("") }
 
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
-            viewModel.setImageUri(uri)
-            image = viewModel.encodeImageToBase64(context, uri, null)
+            viewModelPostJob.setImageUri(uri)
+            image = viewModelPostJob.encodeImageToBase64(context, uri, null)
         }
     }
 
     val cameraLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             if (bitmap != null) {
-                viewModel.setImageCamera(bitmap)
-                image = viewModel.encodeImageToBase64(context, null, bitmap)
+                viewModelPostJob.setImageCamera(bitmap)
+                image = viewModelPostJob.encodeImageToBase64(context, null, bitmap)
             }
         }
 
-    LaunchedEffect(Unit) {
-        viewModel.initializeLocationClient(context)
+    val permissionGranted = ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val locationPermissionRequestLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModelPostJob.requestCurrentLocation(context)
+        } else {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    "Konum izni verilmedi",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
     }
 
     Scaffold(
@@ -173,7 +197,7 @@ fun PostJob(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (show && (imageUri == null || imageCamera == null)) {
+                    if (imageUri == null && imageCamera == null) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_camera_alt_24),
                             contentDescription = null,
@@ -181,10 +205,8 @@ fun PostJob(
                                 .weight(1f)
                                 .clickable {
                                     cameraLauncher.launch(null)
-                                    show = false
                                 }
                         )
-
                         VerticalDivider(
                             color = Color.Black, modifier = Modifier
                                 .height(40.dp)
@@ -196,8 +218,7 @@ fun PostJob(
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable {
-                                    pickImageLauncher.launch("image/*");
-                                    show = false
+                                    pickImageLauncher.launch("image/*")
                                 }
                         )
                     } else {
@@ -207,8 +228,7 @@ fun PostJob(
                                     .size(150.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
-                                        show = true
-                                        viewModel.setImageUri(null)
+                                        viewModelPostJob.removeImageUri()
                                     },
                                 contentScale = ContentScale.Crop,
                                 painter = rememberAsyncImagePainter(it),
@@ -222,8 +242,7 @@ fun PostJob(
                                     .size(150.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
-                                        show = true
-                                        viewModel.setImageCamera(null)
+                                        viewModelPostJob.removeCameraBitMap()
                                     },
                                 contentScale = ContentScale.Crop,
                                 bitmap = it.asImageBitmap(),
@@ -300,7 +319,12 @@ fun PostJob(
                             .weight(1f)
                             .padding(20.dp),
                         onClick = {
-                            viewModel.requestCurrentLocation(context)
+                            if (permissionGranted) {
+                                viewModelPostJob.requestCurrentLocation(context)
+                            } else {
+                                locationPermissionRequestLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                                locationPermissionRequestLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                            }
                         },
                         colors = ButtonDefaults.elevatedButtonColors(
                             containerColor = Color(0xFFB34086)
@@ -322,7 +346,7 @@ fun PostJob(
                     .fillMaxWidth()
                     .padding(20.dp),
                 onClick = {
-                    viewModel.postJob(
+                    viewModelPostJob.postJob(
                         context = context,
                         jobTitle = jobTitle.value,
                         jobDesc = jobDesc.value,
@@ -334,17 +358,14 @@ fun PostJob(
         }
     }
 
-    LaunchedEffect(viewModel.message.value) {
-        viewModel.message.value?.let { message ->
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    message = message,
-                    duration = SnackbarDuration.Short
-                )
-                viewModel.message.value = null
-            }
-        }
-    }
+    ObserveMessageAndRefresh(
+        message = viewModelPostJob.message.value,
+        clearMessage = { viewModelPostJob.message.value = null },
+        onSuccess = {
+            viewModelGetJobs.getJobs(user = true, context = context)
+        },
+        snackbarHostState = snackbarHostState
+    )
 }
 
 

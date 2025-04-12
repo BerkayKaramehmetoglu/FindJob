@@ -23,14 +23,18 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.findjob.model.GetJobs
+import kotlinx.coroutines.launch
 
 @Composable
 fun CustomText(
@@ -206,6 +211,29 @@ fun DialogWithImage(
                         Text(color = Color(0xFF22bb33), text = "Güncelle")
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ObserveMessageAndRefresh(
+    message: String?,
+    clearMessage: () -> Unit,
+    onSuccess: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(message) {
+        message?.let {
+            coroutineScope.launch {
+                onSuccess()
+                snackbarHostState.showSnackbar(
+                    message = it,
+                    duration = SnackbarDuration.Short
+                )
+                clearMessage()
             }
         }
     }

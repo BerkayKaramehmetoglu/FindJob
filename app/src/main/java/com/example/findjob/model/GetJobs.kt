@@ -7,7 +7,7 @@ data class GetJobs(
     val jobPrice: String,
     val jobDesc: String,
     val uid: String,
-    val jobAdrs: String,
+    val jobCity: String,
     val currentTime: String,
     val state: Boolean
 )

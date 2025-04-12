@@ -1,13 +1,12 @@
 package com.example.findjob.viewmodel
 
-import android.annotation.SuppressLint
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.location.Geocoder
 import android.net.Uri
-import android.os.Build
 import android.os.Looper
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.State
@@ -23,8 +22,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Locale
 import android.util.Base64
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.core.app.ActivityCompat
 import java.io.ByteArrayOutputStream
 
 class PostJobViewModel : ViewModel() {
@@ -33,6 +33,12 @@ class PostJobViewModel : ViewModel() {
     private val _locationText = mutableStateOf("Konum")
     val locationText: State<String> = _locationText
 
+    private val _latitude = mutableDoubleStateOf(0.0)
+    private val latitude: State<Double> = _latitude
+
+    private val _longitude = mutableDoubleStateOf(0.0)
+    private val longitude: State<Double> = _longitude
+
     private var _imageUri = mutableStateOf<Uri?>(null)
     val imageUri: State<Uri?> = _imageUri
 
@@ -40,11 +46,19 @@ class PostJobViewModel : ViewModel() {
         _imageUri.value = uri
     }
 
+    fun removeImageUri() {
+        _imageUri.value = null
+    }
+
     private var _imageCamera = mutableStateOf<Bitmap?>(null)
     val imageCamera: State<Bitmap?> = _imageCamera
 
     fun setImageCamera(bitmap: Bitmap?) {
         _imageCamera.value = bitmap
+    }
+
+    fun removeCameraBitMap() {
+        _imageCamera.value = null
     }
 
     fun encodeImageToBase64(context: Context, uri: Uri? = null, bitmap: Bitmap? = null): String? {
@@ -66,8 +80,6 @@ class PostJobViewModel : ViewModel() {
         }
     }
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-
     fun postJob(
         context: Context,
         jobTitle: String,
@@ -77,7 +89,6 @@ class PostJobViewModel : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val location = if (_locationText.value == "Konum") null else _locationText.value
                 val uid = getUserSession(context)
                 val response = Services.userService.postJob(
                     PostJob(
@@ -85,8 +96,9 @@ class PostJobViewModel : ViewModel() {
                         jobTitle,
                         jobDesc,
                         jobPrice,
-                        location,
-                        image
+                        image,
+                        latitude.value,
+                        longitude.value
                     )
                 )
                 if (response.isSuccessful) {
@@ -100,28 +112,43 @@ class PostJobViewModel : ViewModel() {
         }
     }
 
-    fun initializeLocationClient(context: Context) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    }
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    @SuppressLint("MissingPermission")
     fun requestCurrentLocation(context: Context) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1
+            )
+            return
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
         val locationRequest = LocationRequest.Builder(10000)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
 
         val locationCallback = object : LocationCallback() {
-            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
                     if (location != null) {
-                        getCityName(context, location.latitude, location.longitude) { cityName ->
-                            _locationText.value = cityName
-                        }
-                        return
+                        _latitude.doubleValue = location.latitude
+                        _longitude.doubleValue = location.longitude
+                        _locationText.value = "Konum Alındı"
                     }
                 }
-                _locationText.value = "Konum alınamadı"
             }
         }
 
@@ -130,34 +157,5 @@ class PostJobViewModel : ViewModel() {
             locationCallback,
             Looper.getMainLooper()
         )
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun getCityName(
-        context: Context,
-        latitude: Double,
-        longitude: Double,
-        onResult: (String) -> Unit
-    ) {
-        try {
-            val geocoder = Geocoder(context, Locale.getDefault())
-
-            geocoder.getFromLocation(
-                latitude, longitude, 1
-            ) { addresses ->
-                if (addresses.isNotEmpty()) {
-                    val firstAddress = addresses.first()
-                    val countryName = firstAddress.countryName ?: "Ülke bilgisi yok"
-                    val cityName =
-                        firstAddress.locality ?: firstAddress.adminArea ?: "Şehir bilgisi yok"
-
-                    onResult("$cityName/$countryName")
-                } else {
-                    onResult("Adres bilgisi alınamadı")
-                }
-            }
-        } catch (e: Exception) {
-            onResult("Hata: ${e.localizedMessage}")
-        }
     }
 }
