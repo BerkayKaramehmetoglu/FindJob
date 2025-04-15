@@ -24,7 +24,8 @@ class GetJobsViewModel : ViewModel() {
                             val filteredJobs = it.filter { jobs -> jobs.uid == getUserSession(context) }
                             jobsList.value = filteredJobs
                         } else {
-                            jobsList.value = it
+                            val filteredAllJobs = it.filter{jobs -> jobs.state }
+                            jobsList.value = filteredAllJobs
                         }
                     } ?: run {
                         println("Veri bulunamadı veya boş.")

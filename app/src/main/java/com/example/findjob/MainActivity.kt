@@ -94,7 +94,11 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable("main_screen") {
-                                MainPage(navController = navController)
+                                viewModelGetJobs.getJobs(context = context)
+                                MainPage(
+                                    navController = navController,
+                                    jobList = viewModelGetJobs.jobsList.value
+                                )
                             }
 
                             composable("postjob_screen") {
