@@ -47,13 +47,13 @@ fun RegisterPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0E5459)),
+            .background(Color(0xFF6B6965)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFFFE642),
+                containerColor = Color(0xFFD9D0C7),
             ),
             shape = RoundedCornerShape(50.dp, 0.dp, 50.dp, 0.dp),
             modifier = Modifier.fillMaxSize(0.8f)
@@ -64,10 +64,11 @@ fun RegisterPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CustomText(
-                    text = "Kayıt Ekranı", color = Color(0xFFB34086), modifier = Modifier
+                    text = "Kayıt Ekranı", color = Color(0xFF1B1B1B),
+                    modifier = Modifier
                         .padding(20.dp)
                         .fillMaxWidth(),
-                    fontSize = 40.sp
+                    fontSize = 40.sp,
                 )
                 CustomTxtField(
                     value = email,
@@ -108,7 +109,7 @@ fun RegisterPage(
                     modifier = Modifier.clickable {
                         navController.navigate("login_screen")
                     },
-                    fontSize = 17.sp,
+                    fontSize = 20.sp,
                     textDecoration = TextDecoration.Underline
                 )
             }

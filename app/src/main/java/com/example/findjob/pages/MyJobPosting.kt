@@ -71,13 +71,13 @@ fun MyJob(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF0E5459),
-                    titleContentColor = Color.Black,
+                    containerColor = Color(0xFFD9D0C7),
                 ),
                 title = {
                     Text(
                         text = "İş İlanlarım",
-                        maxLines = 1,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
@@ -89,18 +89,15 @@ fun MyJob(
                             modifier = Modifier.fillMaxSize(0.8f),
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = Color.Black
                         )
                     }
                 },
                 actions = {
                     Icon(
                         modifier = Modifier
-                            .padding(10.dp)
                             .fillMaxSize(0.08f),
                         imageVector = Icons.Filled.CheckCircle,
                         contentDescription = null,
-                        tint = Color.Black
                     )
                 }
             )
@@ -110,7 +107,7 @@ fun MyJob(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize()
-                .background(Color(0xFFB34086))
+                .background(Color(0xFF6B6965))
         ) {
             items(jobList) { job ->
                 ElevatedCard(
@@ -118,7 +115,7 @@ fun MyJob(
                         defaultElevation = 10.dp
                     ),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF2B9DA6),
+                        containerColor = Color(0xFF9E8B6A),
                         contentColor = Color.White,
                     ),
                     modifier = Modifier
@@ -134,6 +131,7 @@ fun MyJob(
                             painter = painterResource(id = R.drawable.baseline_circle_24),
                             contentDescription = null,
                             tint = if (!job.state) Color.Red else Color.Green,
+                            modifier = Modifier.size(25.dp)
                         )
                         Column(
                             modifier = Modifier
@@ -143,21 +141,17 @@ fun MyJob(
                             Text(
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
                                 text = job.currentTime,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold
                             )
                             AsyncImage(
                                 model = job.downloadUrl,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .padding(10.dp)
-                                    .size(150.dp)
+                                    .size(250.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .align(Alignment.CenterHorizontally)
-                            )
-                            Text(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                text = "Görüntülenme: 0",
-                                textAlign = TextAlign.Center
                             )
                         }
                         Column(
@@ -169,7 +163,7 @@ fun MyJob(
                                 modifier = Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .padding(bottom = 5.dp),
-                                text = job.jobTitle,
+                                text = job.jobTitle.uppercase(),
                                 textAlign = TextAlign.Center
                             )
                             Box(
@@ -185,14 +179,13 @@ fun MyJob(
                             }
                             Text(
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                                text = job.jobCity,
+                                text = "Konum: ${job.jobCity.uppercase()}",
                                 textAlign = TextAlign.Center
                             )
                             Text(
                                 modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(top = 10.dp),
-                                text = job.jobPrice,
+                                    .align(Alignment.CenterHorizontally),
+                                text = "Fiyat: ${job.jobPrice} ₺",
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -202,18 +195,23 @@ fun MyJob(
                                     .padding(bottom = 10.dp)
                                     .clickable {
                                         viewModelDelete.deleteJob(job.id)
-                                    },
+                                    }
+                                    .size(30.dp),
                                 imageVector = Icons.Rounded.Clear,
                                 contentDescription = null,
                                 tint = Color.Red
                             )
                             Icon(
-                                modifier = Modifier.clickable {
-                                    val currentDialogState = showDialogMap.value[job.id] ?: false
-                                    showDialogMap.value = showDialogMap.value.toMutableMap().apply {
-                                        put(job.id, !currentDialogState)
+                                modifier = Modifier
+                                    .clickable {
+                                        val currentDialogState =
+                                            showDialogMap.value[job.id] ?: false
+                                        showDialogMap.value =
+                                            showDialogMap.value.toMutableMap().apply {
+                                                put(job.id, !currentDialogState)
+                                            }
                                     }
-                                },
+                                    .size(30.dp),
                                 imageVector = Icons.Rounded.Create,
                                 contentDescription = null,
                                 tint = Color.Yellow

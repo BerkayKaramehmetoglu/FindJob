@@ -4,10 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -72,7 +70,6 @@ import com.example.findjob.viewmodel.GetJobsViewModel
 import com.example.findjob.viewmodel.PostJobViewModel
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostJob(
@@ -135,13 +132,13 @@ fun PostJob(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF0E5459),
-                    titleContentColor = Color.Black,
+                    containerColor = Color(0xFFD9D0C7),
                 ),
                 title = {
                     Text(
                         text = "İş İlanı Yayınla",
-                        maxLines = 1,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp
@@ -174,7 +171,7 @@ fun PostJob(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .background(Color(0xFFFFE642)),
+                .background(Color(0xFF6B6965)),
             verticalArrangement = Arrangement.Center
         ) {
             val jobTitle = remember { mutableStateOf("") }
@@ -185,7 +182,7 @@ fun PostJob(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent,
                 ),
-                border = BorderStroke(1.dp, Color.Black),
+                border = BorderStroke(2.dp, Color.Black),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
@@ -206,10 +203,11 @@ fun PostJob(
                                 .clickable {
                                     cameraLauncher.launch(null)
                                 }
+                                .size(45.dp)
                         )
                         VerticalDivider(
                             color = Color.Black, modifier = Modifier
-                                .height(40.dp)
+                                .height(45.dp)
                                 .width(1.dp)
                         )
                         Icon(
@@ -220,12 +218,13 @@ fun PostJob(
                                 .clickable {
                                     pickImageLauncher.launch("image/*")
                                 }
+                                .size(45.dp)
                         )
                     } else {
                         imageUri?.let {
                             Image(
                                 modifier = Modifier
-                                    .size(150.dp)
+                                    .size(200.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
                                         viewModelPostJob.removeImageUri()
@@ -239,7 +238,7 @@ fun PostJob(
                         imageCamera?.let {
                             Image(
                                 modifier = Modifier
-                                    .size(150.dp)
+                                    .size(200.dp)
                                     .clip(RoundedCornerShape(20.dp))
                                     .clickable {
                                         viewModelPostJob.removeCameraBitMap()
@@ -277,9 +276,9 @@ fun PostJob(
 
             CustomTxtField(
                 value = jobPrice,
-                label = "İş Fiyatı",
+                label = "İş Fiyatı ₺",
                 iconResId = R.drawable.baseline_attach_money_24,
-                placeholder = "İş Fiyatı",
+                placeholder = "İş Fiyatı ₺",
                 keyboardType = KeyboardType.Email,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -290,7 +289,7 @@ fun PostJob(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent,
                 ),
-                border = BorderStroke(1.dp, Color.Black),
+                border = BorderStroke(2.dp, Color.Black),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
@@ -305,7 +304,7 @@ fun PostJob(
                         color = Color.Black,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(20.dp),
+                            .align(Alignment.CenterVertically)
                     )
 
                     VerticalDivider(
@@ -317,7 +316,7 @@ fun PostJob(
                     FilledTonalButton(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(20.dp),
+                            .padding(15.dp),
                         onClick = {
                             if (permissionGranted) {
                                 viewModelPostJob.requestCurrentLocation(context)
@@ -327,12 +326,12 @@ fun PostJob(
                             }
                         },
                         colors = ButtonDefaults.elevatedButtonColors(
-                            containerColor = Color(0xFFB34086)
+                            containerColor = Color(0xFF1B1B1B)
                         )
                     ) {
                         Text(
                             text = "Konum Al",
-                            color = Color(0xFFFFE642),
+                            color = Color.White,
                             fontSize = 17.sp,
                             textAlign = TextAlign.Center
                         )
@@ -341,7 +340,7 @@ fun PostJob(
             }
 
             CustomElevatedBtn(
-                "İlan Oluştur",
+                "İlanımı Oluştur",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),

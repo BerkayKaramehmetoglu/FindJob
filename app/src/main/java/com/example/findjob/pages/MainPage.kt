@@ -5,9 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,14 +16,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedCard
@@ -41,7 +37,6 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -51,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,44 +71,45 @@ fun MainPage(
     ModalNavigationDrawer(
         scrimColor = Color.Transparent,
         drawerContent = {
-            ModalDrawerSheet(drawerContainerColor = Color(0xFFFFE642)) {
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 5.dp)
-                ) {
+            ModalDrawerSheet(drawerContainerColor = Color(0xFFD9D0C7)) {
+                Column {
                     Text(
                         "FIND A Jobs",
-                        modifier = Modifier.padding(15.dp),
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
                         style = MaterialTheme.typography.displaySmall,
-                        color = Color(0xFF0E5459)
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
                     )
                     HorizontalDivider(color = Color.Black)
                     Text(
-                        "Aktivitelerim",
-                        modifier = Modifier.padding(15.dp),
+                        "Aktiviteler",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFF0E5459)
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        fontSize = 25.sp
                     )
                     NavigationDrawerItem(
                         colors = NavigationDrawerItemDefaults.colors(
                             unselectedContainerColor = Color.Transparent
                         ),
-                        modifier = Modifier
-                            .padding(10.dp, 0.dp, 10.dp, 0.dp),
                         label = {
                             Text(
-                                text = "İş İlanı Ver",
-                                color = Color(0xFF0E5459),
-                                fontSize = 17.sp
+                                text = "İş İlanı Oluştur",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
                             )
                         },
                         selected = false,
                         icon = {
                             Icon(
                                 Icons.Outlined.AddCircle,
-                                tint = Color(0xFF0E5459),
                                 contentDescription = null,
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier.size(35.dp)
                             )
                         },
                         onClick = { navController.navigate("postjob_screen") }
@@ -123,12 +118,11 @@ fun MainPage(
                         colors = NavigationDrawerItemDefaults.colors(
                             unselectedContainerColor = Color.Transparent
                         ),
-                        modifier = Modifier.padding(10.dp, 15.dp, 10.dp, 15.dp),
                         label = {
                             Text(
                                 "İş İlanlarım",
-                                color = Color(0xFF0E5459),
-                                fontSize = 17.sp
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
                             )
                         },
                         selected = false,
@@ -136,38 +130,61 @@ fun MainPage(
                             Icon(
                                 Icons.Outlined.CheckCircle,
                                 contentDescription = null,
-                                tint = Color(0xFF0E5459),
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier.size(35.dp)
                             )
                         },
                         onClick = { navController.navigate("myjob_screen") }
+                    )
+                    NavigationDrawerItem(
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.Transparent
+                        ),
+                        label = {
+                            Text(
+                                "Favori İlanlarım",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        },
+                        selected = false,
+                        icon = {
+                            Icon(
+                                Icons.Outlined.Favorite,
+                                contentDescription = null,
+                                modifier = Modifier.size(35.dp)
+                            )
+                        },
+                        onClick = { /* Favoriler Sayfasına Gidecek */ }
                     )
                     HorizontalDivider(color = Color.Black)
                     NavigationDrawerItem(
                         colors = NavigationDrawerItemDefaults.colors(
                             unselectedContainerColor = Color.Transparent
                         ),
-                        modifier = Modifier.padding(10.dp, 15.dp, 10.dp, 0.dp),
-                        label = { Text("Çıkış", color = Color(0xFF0E5459), fontSize = 17.sp) },
+                        label = {
+                            Text(
+                                text = "Çıkış Yap",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
+                        },
                         selected = false,
                         icon = {
                             Icon(
                                 Icons.AutoMirrored.Outlined.ExitToApp,
                                 contentDescription = null,
-                                tint = Color(0xFF0E5459),
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier.size(35.dp)
                             )
                         },
                         onClick = {
                             coroutineScope.launch {
                                 clearUserSession(context)
                                 navController.navigate("login_screen") {
-                                    //popUpTo("main_screen") { inclusive = true }
+                                    popUpTo("main_screen") { inclusive = true }
                                 }
                             }
                         },
                     )
-                    Spacer(Modifier.height(12.dp))
                 }
             }
         },
@@ -179,14 +196,12 @@ fun MainPage(
                 TopAppBar(
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                         containerColor = Color(0xFFD9D0C7),
-                        titleContentColor = Color.Black,
                     ),
                     title = {
                         Text(
                             text = "Find a Jobs",
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
-                            maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontWeight = FontWeight.Bold,
                             fontSize = 25.sp
@@ -208,7 +223,6 @@ fun MainPage(
                     actions = {
                         Icon(
                             modifier = Modifier
-                                .padding(10.dp)
                                 .fillMaxSize(0.08f),
                             imageVector = Icons.Filled.Home,
                             contentDescription = null,
@@ -304,7 +318,8 @@ fun MainPage(
                                         .padding(bottom = 10.dp)
                                         .clickable {
                                             /* tıklandığında favorilere eklenecek */
-                                        },
+                                        }
+                                        .size(30.dp),
                                     imageVector = Icons.Rounded.Favorite,
                                     contentDescription = null,
                                     tint = Color.Red

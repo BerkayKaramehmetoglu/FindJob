@@ -1,8 +1,6 @@
 package com.example.findjob.utils
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,18 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -91,14 +88,28 @@ fun CustomTxtField(
         leadingIcon = {
             Icon(
                 painter = painterResource(id = iconResId),
-                contentDescription = null
+                contentDescription = null,
+                tint = Color(0XFF1B1B1B),
+                modifier = Modifier.size(30.dp)
             )
         },
         onValueChange = { value.value = it },
-        label = { Text(text = label, fontSize = 20.sp, fontWeight = FontWeight.Bold) },
-        placeholder = { Text(text = placeholder, fontSize = 17.sp, fontWeight = FontWeight.Bold) },
+        label = { Text(text = label, fontSize = 25.sp) },
+        placeholder = {
+            Text(
+                text = placeholder,
+                fontSize = 25.sp,
+                color = Color(0XFF1B1B1B)
+            )
+        },
         modifier = modifier,
         visualTransformation = visualTransformation,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0XFF1B1B1B),
+            unfocusedBorderColor = Color(0XFF1B1B1B),
+            focusedLabelColor = Color(0XFF1B1B1B),
+            unfocusedLabelColor = Color(0XFF1B1B1B)
+        ),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
     )
 }
@@ -107,14 +118,14 @@ fun CustomTxtField(
 fun CustomElevatedBtn(text: String, modifier: Modifier, onClick: () -> Unit) {
     ElevatedButton(
         onClick = { onClick() }, colors = ButtonDefaults.elevatedButtonColors(
-            containerColor = Color(0xFFB34086)
+            containerColor = Color(0xFF1B1B1B)
         ),
         contentPadding = PaddingValues(50.dp, 20.dp),
         modifier = modifier
     ) {
         Text(
             text,
-            color = Color(0xFFFFE642),
+            color = Color.White,
             textAlign = TextAlign.Center,
             fontSize = 25.sp,
         )
