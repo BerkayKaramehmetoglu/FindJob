@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.findjob.datastore.getUserSession
+import com.example.findjob.pages.FavoriteJobs
 import com.example.findjob.pages.LoginPage
 import com.example.findjob.pages.MainPage
 import com.example.findjob.pages.MyJob
@@ -97,7 +98,7 @@ class MainActivity : ComponentActivity() {
                                 viewModelGetJobs.getJobs(context = context)
                                 MainPage(
                                     navController = navController,
-                                    jobList = viewModelGetJobs.jobsList.value
+                                    jobList = viewModelGetJobs.allJobsList.value
                                 )
                             }
 
@@ -114,11 +115,20 @@ class MainActivity : ComponentActivity() {
                                 viewModelGetJobs.getJobs(user = true, context = context)
                                 MyJob(
                                     navController = navController,
-                                    jobList = viewModelGetJobs.jobsList.value,
+                                    jobList = viewModelGetJobs.myJobsList.value,
                                     viewModelDelete = viewModelDeleteJob,
                                     viewModelUpdate = viewModelUpdateJob,
                                     viewModelGetJobs = viewModelGetJobs,
                                     snackbarHostState = snackbarHostState
+                                )
+                            }
+
+                            composable("favjob_screen") {
+                                viewModelGetJobs.getJobs(fav = true, context = context)
+                                FavoriteJobs(
+                                    navController = navController,
+                                    jobList = viewModelGetJobs.favJobsList.value,
+                                    viewModelGetJobs = viewModelGetJobs
                                 )
                             }
                         }
@@ -131,6 +141,6 @@ class MainActivity : ComponentActivity() {
 /*eksikler
 response mesajlarını 400 döndür hata olanları,
 backende .env ve .env.example firebase için kullanılmalı,
-fotoğraf binary kullanılmalı,
 uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor,
+çıkış yapıldı mı giriş başarılı diyor
 */

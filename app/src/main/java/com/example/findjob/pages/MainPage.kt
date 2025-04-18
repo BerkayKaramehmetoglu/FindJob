@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.findjob.datastore.addFavJobs
 import com.example.findjob.datastore.clearUserSession
 import com.example.findjob.model.GetJobs
 import kotlinx.coroutines.launch
@@ -154,7 +155,7 @@ fun MainPage(
                                 modifier = Modifier.size(35.dp)
                             )
                         },
-                        onClick = { /* Favoriler Sayfasına Gidecek */ }
+                        onClick = { navController.navigate("favjob_screen") }
                     )
                     HorizontalDivider(color = Color.Black)
                     NavigationDrawerItem(
@@ -165,7 +166,8 @@ fun MainPage(
                             Text(
                                 text = "Çıkış Yap",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
+                                fontSize = 20.sp,
+                                color = Color.Red
                             )
                         },
                         selected = false,
@@ -173,7 +175,8 @@ fun MainPage(
                             Icon(
                                 Icons.AutoMirrored.Outlined.ExitToApp,
                                 contentDescription = null,
-                                modifier = Modifier.size(35.dp)
+                                modifier = Modifier.size(35.dp),
+                                tint = Color.Red
                             )
                         },
                         onClick = {
@@ -317,7 +320,9 @@ fun MainPage(
                                     modifier = Modifier
                                         .padding(bottom = 10.dp)
                                         .clickable {
-                                            /* tıklandığında favorilere eklenecek */
+                                            coroutineScope.launch {
+                                                addFavJobs(context, job.id)
+                                            }
                                         }
                                         .size(30.dp),
                                     imageVector = Icons.Rounded.Favorite,
