@@ -123,7 +123,9 @@ fun LoginPage(
         viewModel.success.value?.let {
             coroutineScope.launch {
                 if (it) {
-                    navController.navigate("main_screen")
+                    navController.navigate("main_screen"){
+                        popUpTo("login_screen") { inclusive = true }
+                    }
                 }
                 viewModel.success.value = null
             }

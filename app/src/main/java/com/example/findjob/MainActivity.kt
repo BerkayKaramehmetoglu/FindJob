@@ -138,9 +138,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-/*eksikler
-response mesajlarını 400 döndür hata olanları,
-backende .env ve .env.example firebase için kullanılmalı,
-uygulamadan çıkış yapınca geri gelince tekrardan uygulamaya giriyor,
-çıkış yapıldı mı giriş başarılı diyor
-*/
